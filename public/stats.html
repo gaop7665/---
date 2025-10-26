@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Statistics - CF URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .stat-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .error {
+            text-align: center;
+            color: #e53e3e;
+            padding: 40px;
+        }
+
+        .url-link {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 URL Statistics</h1>
+        <div id="content">
+            <div class="loading">Loading statistics...</div>
+        </div>
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const urlParams = new URLSearchParams(window.location.search);
+        const shortCode = urlParams.get('code');
+
+        if (!shortCode) {
+            document.getElementById('content').innerHTML = 
+                '<div class="error">No short code provided</div>';
+        } else {
+            loadStats();
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/stats/${shortCode}`);
+                
+                if (!response.ok) {
+                    throw new Error('URL not found');
+                }
+
+                const data = await response.json();
+                
+                const createdDate = data.createdAt ? 
+                    new Date(data.createdAt).toLocaleString() : 'N/A';
+                const lastVisit = data.lastVisit ? 
+                    new Date(data.lastVisit).toLocaleString() : 'Never';
+
+                document.getElementById('content').innerHTML = `
+                    <div class="stat-row">
+                        <span class="stat-label">Short Code:</span>
+                        <span class="stat-value"><strong>${data.shortCode}</strong></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Long URL:</span>
+                        <span class="stat-value">
+                            <a href="${data.longUrl}" target="_blank" class="url-link">
+                                ${data.longUrl}
+                            </a>
+                        </span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Visits:</span>
+                        <span class="stat-value highlight">${data.visits || 0}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Created:</span>
+                        <span class="stat-value">${createdDate}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Last Visit:</span>
+                        <span class="stat-value">${lastVisit}</span>
+                    </div>
+                    ${data.hasPassword ? `
+                    <div class="stat-row">
+                        <span class="stat-label">Password Protected:</span>
+                        <span class="stat-value">🔒 Yes</span>
+                    </div>
+                    ` : ''}
+                `;
+
+            } catch (err) {
+                document.getElementById('content').innerHTML = 
+                    `<div class="error">❌ ${err.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+

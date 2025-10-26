@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CF URL Shortener - Shorten Your Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f7ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .short-url {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .short-url input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .copy-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fee;
+            border-radius: 10px;
+            border-left: 4px solid #e53e3e;
+            color: #e53e3e;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .advanced-options {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .toggle-advanced {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .advanced-content {
+            display: none;
+        }
+
+        .advanced-content.show {
+            display: block;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .stats-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .stats-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 URL Shortener</h1>
+        <p class="subtitle">Make your links short and sweet</p>
+
+        <form id="shortenForm">
+            <div class="input-group">
+                <label for="longUrl">Enter your long URL</label>
+                <input 
+                    type="url" 
+                    id="longUrl" 
+                    placeholder="https://example.com/very/long/url" 
+                    required
+                >
+            </div>
+
+            <div class="advanced-options">
+                <span class="toggle-advanced" onclick="toggleAdvanced()">⚙️ Advanced Options</span>
+                <div class="advanced-content" id="advancedContent">
+                    <div class="input-group">
+                        <label for="customCode">Custom Short Code (optional)</label>
+                        <input 
+                            type="text" 
+                            id="customCode" 
+                            placeholder="my-custom-link"
+                            pattern="[a-zA-Z0-9-_]+"
+                        >
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password Protection (optional)</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="Enter password"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="button" id="submitBtn">
+                Shorten URL
+            </button>
+        </form>
+
+        <div class="result" id="result">
+            <strong>✅ Success! Your short URL:</strong>
+            <div class="short-url">
+                <input type="text" id="shortUrlInput" readonly>
+                <button class="copy-btn" onclick="copyUrl()">Copy</button>
+            </div>
+            <div class="stats-link">
+                <a href="#" id="statsLink" target="_blank">View Statistics</a>
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+    </div>
+
+    <div class="footer">
+        Powered by <a href="https://www.cloudflare.com/" target="_blank">Cloudflare Workers</a>
+        <br>
+        <a href="admin.html">Admin Panel</a>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const longUrl = document.getElementById('longUrl').value;
+            const customCode = document.getElementById('customCode').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const result = document.getElementById('result');
+            const error = document.getElementById('error');
+
+            // Hide previous results
+            result.classList.remove('show');
+            error.classList.remove('show');
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/shorten`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: longUrl,
+                        customCode: customCode || undefined,
+                        password: password || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('shortUrlInput').value = data.shortUrl;
+                    document.getElementById('statsLink').href = `stats.html?code=${data.shortCode}`;
+                    result.classList.add('show');
+                } else {
+                    error.textContent = data.error || 'An error occurred';
+                    error.classList.add('show');
+                }
+            } catch (err) {
+                error.textContent = 'Network error. Please check your API endpoint.';
+                error.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Shorten URL';
+            }
+        });
+
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            content.classList.toggle('show');
+        }
+
+        function copyUrl() {
+            const input = document.getElementById('shortUrlInput');
+            input.select();
+            document.execCommand('copy');
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
+

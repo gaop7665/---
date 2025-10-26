@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - CF URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.show {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #f5f5f5;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .url-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .delete-btn {
+            padding: 8px 16px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            background: #c53030;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error {
+            background: #fee;
+            color: #e53e3e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Admin Panel</h1>
+
+        <div class="login-form" id="loginForm">
+            <div class="input-group">
+                <label for="adminToken">Admin Token</label>
+                <input 
+                    type="password" 
+                    id="adminToken" 
+                    placeholder="Enter your admin token"
+                >
+            </div>
+            <button class="button" onclick="login()">Login</button>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="dashboard" id="dashboard">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUrls">0</div>
+                    <div class="stat-label">Total URLs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalVisits">0</div>
+                    <div class="stat-label">Total Visits</div>
+                </div>
+            </div>
+
+            <h2>All Short URLs</h2>
+            <div id="urlList">
+                <div class="loading">Loading...</div>
+            </div>
+
+            <button class="button" onclick="logout()" style="max-width: 200px; margin-top: 20px;">
+                Logout
+            </button>
+            <br>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let adminToken = localStorage.getItem('adminToken');
+
+        if (adminToken) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('dashboard').classList.add('show');
+            loadDashboard();
+        }
+
+        async function login() {
+            const token = document.getElementById('adminToken').value;
+            const error = document.getElementById('error');
+            error.classList.remove('show');
+
+            if (!token) {
+                error.textContent = 'Please enter admin token';
+                error.classList.add('show');
+                return;
+            }
+
+            // Test the token
+            try {
+                const response = await fetch(`${API_BASE}/api/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    adminToken = token;
+                    localStorage.setItem('adminToken', token);
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('dashboard').classList.add('show');
+                    loadDashboard();
+                } else {
+                    error.textContent = 'Invalid admin token';
+                    error.classList.add('show');
+                }
+            } catch (err) {
+                error.textContent = 'Network error. Please check your connection.';
+                error.classList.add('show');
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load data');
+                }
+
+                const data = await response.json();
+                const urls = data.urls || [];
+
+                // Update stats
+                document.getElementById('totalUrls').textContent = urls.length;
+                const totalVisits = urls.reduce((sum, url) => sum + (url.visits || 0), 0);
+                document.getElementById('totalVisits').textContent = totalVisits;
+
+                // Create table
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Short Code</th>
+                                <th>Long URL</th>
+                                <th>Visits</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                urls.forEach(url => {
+                    const createdDate = url.createdAt ? new Date(url.createdAt).toLocaleDateString() : 'N/A';
+                    tableHtml += `
+                        <tr>
+                            <td><strong>${url.shortCode}</strong></td>
+                            <td class="url-cell" title="${url.longUrl}">${url.longUrl}</td>
+                            <td>${url.visits || 0}</td>
+                            <td>${createdDate}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteUrl('${url.shortCode}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHtml += `
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('urlList').innerHTML = tableHtml;
+
+            } catch (err) {
+                document.getElementById('urlList').innerHTML = 
+                    '<p style="color: red; text-align: center;">Failed to load dashboard data</p>';
+            }
+        }
+
+        async function deleteUrl(shortCode) {
+            if (!confirm(`Are you sure you want to delete "${shortCode}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/delete/${shortCode}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadDashboard(); // Reload the dashboard
+                } else {
+                    alert('Failed to delete URL');
+                }
+            } catch (err) {
+                alert('Network error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+
