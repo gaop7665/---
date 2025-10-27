@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Statistics - CF URL Shortener</title>
+    <title>URL 统计 - URL 短链接服务</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -20,6 +20,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            background: white;
+            transform: translateY(-2px);
         }
 
         .container {
@@ -96,15 +115,40 @@
         .url-link:hover {
             text-decoration: underline;
         }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+    <div class="lang-switch" onclick="toggleLanguage()">
+        <span id="langText">English</span>
+    </div>
+
     <div class="container">
-        <h1>📊 URL Statistics</h1>
+        <h1 id="title">📊 URL 统计</h1>
         <div id="content">
-            <div class="loading">Loading statistics...</div>
+            <div class="loading" id="loadingText">加载统计数据...</div>
         </div>
-        <a href="index.html" class="back-link">← Back to Home</a>
+        <a href="index.html" class="back-link" id="backLink">← 返回主页</a>
+    </div>
+
+    <div class="footer">
+        <span id="footerText">由 <a href="https://www.xswweb.com" target="_blank">www.xswweb.com</a> 提供支持</span>
     </div>
 
     <script>
@@ -112,14 +156,71 @@
         const urlParams = new URLSearchParams(window.location.search);
         const shortCode = urlParams.get('code');
 
+        const translations = {
+            zh: {
+                title: '📊 URL 统计',
+                loadingText: '加载统计数据...',
+                backLink: '← 返回主页',
+                langText: 'English',
+                errorNoCode: '未提供短代码',
+                errorNotFound: '❌ URL 未找到',
+                labelShortCode: '短代码：',
+                labelLongUrl: '长 URL：',
+                labelVisits: '总访问量：',
+                labelCreated: '创建时间：',
+                labelLastVisit: '最后访问：',
+                labelPassword: '密码保护：',
+                valueNever: '从未',
+                valueYes: '🔒 是'
+            },
+            en: {
+                title: '📊 URL Statistics',
+                loadingText: 'Loading statistics...',
+                backLink: '← Back to Home',
+                langText: '中文',
+                errorNoCode: 'No short code provided',
+                errorNotFound: '❌ URL not found',
+                labelShortCode: 'Short Code:',
+                labelLongUrl: 'Long URL:',
+                labelVisits: 'Total Visits:',
+                labelCreated: 'Created:',
+                labelLastVisit: 'Last Visit:',
+                labelPassword: 'Password Protected:',
+                valueNever: 'Never',
+                valueYes: '🔒 Yes'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLanguage();
+            if (shortCode) {
+                loadStats();
+            }
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('loadingText').textContent = t.loadingText;
+            document.getElementById('backLink').textContent = t.backLink;
+            document.getElementById('langText').textContent = t.langText;
+            
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+        }
+
         if (!shortCode) {
+            const t = translations[currentLang];
             document.getElementById('content').innerHTML = 
-                '<div class="error">No short code provided</div>';
+                `<div class="error">${t.errorNoCode}</div>`;
         } else {
             loadStats();
         }
 
         async function loadStats() {
+            const t = translations[currentLang];
             try {
                 const response = await fetch(`${API_BASE}/api/stats/${shortCode}`);
                 
@@ -130,17 +231,17 @@
                 const data = await response.json();
                 
                 const createdDate = data.createdAt ? 
-                    new Date(data.createdAt).toLocaleString() : 'N/A';
+                    new Date(data.createdAt).toLocaleString(currentLang === 'zh' ? 'zh-CN' : 'en-US') : 'N/A';
                 const lastVisit = data.lastVisit ? 
-                    new Date(data.lastVisit).toLocaleString() : 'Never';
+                    new Date(data.lastVisit).toLocaleString(currentLang === 'zh' ? 'zh-CN' : 'en-US') : t.valueNever;
 
                 document.getElementById('content').innerHTML = `
                     <div class="stat-row">
-                        <span class="stat-label">Short Code:</span>
+                        <span class="stat-label">${t.labelShortCode}</span>
                         <span class="stat-value"><strong>${data.shortCode}</strong></span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Long URL:</span>
+                        <span class="stat-label">${t.labelLongUrl}</span>
                         <span class="stat-value">
                             <a href="${data.longUrl}" target="_blank" class="url-link">
                                 ${data.longUrl}
@@ -148,33 +249,31 @@
                         </span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Total Visits:</span>
+                        <span class="stat-label">${t.labelVisits}</span>
                         <span class="stat-value highlight">${data.visits || 0}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Created:</span>
+                        <span class="stat-label">${t.labelCreated}</span>
                         <span class="stat-value">${createdDate}</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Last Visit:</span>
+                        <span class="stat-label">${t.labelLastVisit}</span>
                         <span class="stat-value">${lastVisit}</span>
                     </div>
                     ${data.hasPassword ? `
                     <div class="stat-row">
-                        <span class="stat-label">Password Protected:</span>
-                        <span class="stat-value">🔒 Yes</span>
+                        <span class="stat-label">${t.labelPassword}</span>
+                        <span class="stat-value">${t.valueYes}</span>
                     </div>
                     ` : ''}
                 `;
 
             } catch (err) {
                 document.getElementById('content').innerHTML = 
-                    `<div class="error">❌ ${err.message}</div>`;
+                    `<div class="error">${t.errorNotFound}</div>`;
             }
         }
     </script>
 </body>
 </html>
-
-
 
