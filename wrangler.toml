@@ -1,12 +1,14 @@
-name = "cf-url-shortener"
+name = "duanlianj"  # 修改为与 Cloudflare 中的 Worker 名称一致
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
 # KV Namespace binding
-[[kv_namespaces]]
-binding = "URL_DB"
-id = "your_kv_namespace_id_here"  # 替换为实际的 KV namespace ID
-preview_id = "your_preview_kv_namespace_id_here"  # 替换为实际的 preview KV namespace ID
+# 暂时注释，改为在 Cloudflare Dashboard 中配置
+# 配置路径：Dashboard → Workers & Pages → 您的 Worker → Settings → Variables → KV Namespace Bindings
+# [[kv_namespaces]]
+# binding = "URL_DB"
+# id = "your_kv_namespace_id_here"
+# preview_id = "your_preview_kv_namespace_id_here"
 
 # Environment variables (configured in Cloudflare Dashboard)
 # [vars]
