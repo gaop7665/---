@@ -58,10 +58,10 @@ export default {
             }
           }
           
-          // 没有 token 或 token 无效，跳转到密码验证页面
-          const verifyUrl = new URL('/verify.html', request.url);
-          verifyUrl.searchParams.set('code', shortCode);
-          return Response.redirect(verifyUrl.toString(), 302);
+              // 没有 token 或 token 无效，跳转到密码验证页面
+              const pagesUrl = env.PAGES_URL || 'https://url.xswweb.com';
+              const verifyUrl = `${pagesUrl}/verify.html?code=${shortCode}`;
+              return Response.redirect(verifyUrl, 302);
         }
 
         // 没有密码保护，直接重定向
