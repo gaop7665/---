@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密码验证 - URL 短链接服务</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fee;
+            border-radius: 10px;
+            border-left: 4px solid #e53e3e;
+            color: #e53e3e;
+        }
+
+        .error.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switch" onclick="toggleLanguage()">
+        <span id="langText">English</span>
+    </div>
+
+    <div class="container">
+        <h1 id="title">🔒 密码保护</h1>
+        <p class="subtitle" id="subtitle">此链接受密码保护，请输入密码访问</p>
+
+        <form id="verifyForm">
+            <div class="input-group">
+                <label for="password" id="labelPassword">密码</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="输入密码"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <button type="submit" class="button" id="submitBtn">
+                验证并访问
+            </button>
+        </form>
+
+        <div class="error" id="error"></div>
+    </div>
+
+    <div class="footer">
+        <span id="footerText">由 <a href="https://www.xswweb.com" target="_blank">www.xswweb.com</a> 提供支持</span>
+    </div>
+
+    <script>
+        const API_BASE = 'https://link.xswweb.com';
+        const urlParams = new URLSearchParams(window.location.search);
+        const shortCode = urlParams.get('code');
+
+        const translations = {
+            zh: {
+                title: '🔒 密码保护',
+                subtitle: '此链接受密码保护，请输入密码访问',
+                labelPassword: '密码',
+                passwordPlaceholder: '输入密码',
+                submitBtn: '验证并访问',
+                langText: 'English',
+                verifying: '验证中...',
+                errorWrong: '❌ 密码错误，请重试',
+                errorNoCode: '❌ 缺少短代码参数',
+                errorNetwork: '❌ 网络错误，请稍后再试'
+            },
+            en: {
+                title: '🔒 Password Protected',
+                subtitle: 'This link is password protected. Please enter the password to access.',
+                labelPassword: 'Password',
+                passwordPlaceholder: 'Enter password',
+                submitBtn: 'Verify and Access',
+                langText: '中文',
+                verifying: 'Verifying...',
+                errorWrong: '❌ Incorrect password. Please try again.',
+                errorNoCode: '❌ Missing short code parameter',
+                errorNetwork: '❌ Network error. Please try again later.'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('labelPassword').textContent = t.labelPassword;
+            document.getElementById('password').placeholder = t.passwordPlaceholder;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('langText').textContent = t.langText;
+            
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+        }
+
+        if (!shortCode) {
+            const t = translations[currentLang];
+            const error = document.getElementById('error');
+            error.textContent = t.errorNoCode;
+            error.classList.add('show');
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const error = document.getElementById('error');
+            const t = translations[currentLang];
+
+            error.classList.remove('show');
+            submitBtn.disabled = true;
+            submitBtn.textContent = t.verifying;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: shortCode,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // 验证成功，跳转到目标 URL
+                    window.location.href = `${API_BASE}/${shortCode}?token=${data.token}`;
+                } else {
+                    error.textContent = t.errorWrong;
+                    error.classList.add('show');
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            } catch (err) {
+                error.textContent = t.errorNetwork;
+                error.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = t.submitBtn;
+            }
+        });
+    </script>
+</body>
+</html>
+
