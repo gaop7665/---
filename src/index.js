@@ -1,6 +1,6 @@
 /**
  * CF URL Shortener - Cloudflare Workers Backend
- * 完整的密码保护功能 URL 短链接服务
+ * URL 短链接服务
  */
 
 export default {
@@ -30,7 +30,6 @@ export default {
       // Redirect short URLs
       if (path.length > 1) {
         const shortCode = path.substring(1);
-        const token = url.searchParams.get('token');
         
         // 检查短链接是否存在
         const longUrl = await env.URL_DB.get(shortCode);
@@ -42,29 +41,7 @@ export default {
           });
         }
 
-        // 检查是否有密码保护
-        const hasPassword = await env.URL_DB.get(`${shortCode}:pass`);
-        
-        if (hasPassword) {
-          // 如果有密码保护
-          if (token) {
-            // 验证 token
-            const validToken = await env.URL_DB.get(`${shortCode}:token:${token}`);
-            if (validToken) {
-              // Token 有效，删除 token 并重定向
-              await env.URL_DB.delete(`${shortCode}:token:${token}`);
-              await incrementVisits(env, shortCode);
-              return Response.redirect(longUrl, 302);
-            }
-          }
-          
-              // 没有 token 或 token 无效，跳转到密码验证页面
-              const pagesUrl = env.PAGES_URL || 'https://url.xswweb.com';
-              const verifyUrl = `${pagesUrl}/verify.html?code=${shortCode}`;
-              return Response.redirect(verifyUrl, 302);
-        }
-
-        // 没有密码保护，直接重定向
+        // 直接重定向
         await incrementVisits(env, shortCode);
         return Response.redirect(longUrl, 302);
       }
@@ -76,7 +53,6 @@ export default {
         endpoints: {
           'POST /api/shorten': 'Create short URL',
           'GET /api/stats/:code': 'Get URL statistics',
-          'POST /api/verify': 'Verify password',
           'GET /api/list': 'List all URLs (admin)',
           'DELETE /api/delete/:code': 'Delete URL (admin)',
           'GET /:code': 'Redirect to long URL'
@@ -106,7 +82,7 @@ async function handleAPI(request, env, path, method, corsHeaders) {
   if (path === '/api/shorten' && method === 'POST') {
     try {
       const body = await request.json();
-      const { url: longUrl, customCode, password } = body;
+      const { url: longUrl, customCode } = body;
 
       if (!longUrl || !isValidUrl(longUrl)) {
         return jsonResponse({ error: 'Invalid URL' }, 400, headers);
@@ -127,18 +103,11 @@ async function handleAPI(request, env, path, method, corsHeaders) {
       const metadata = {
         longUrl,
         createdAt: new Date().toISOString(),
-        visits: 0,
-        hasPassword: !!password
+        visits: 0
       };
 
       await env.URL_DB.put(shortCode, longUrl);
       await env.URL_DB.put(`${shortCode}:meta`, JSON.stringify(metadata));
-      
-      // 如果有密码，存储加密后的密码
-      if (password) {
-        const hashedPassword = await hashPassword(password);
-        await env.URL_DB.put(`${shortCode}:pass`, hashedPassword);
-      }
 
       const shortUrl = `${env.BASE_URL || request.url.split('/api')[0]}/${shortCode}`;
 
@@ -148,45 +117,6 @@ async function handleAPI(request, env, path, method, corsHeaders) {
         shortUrl,
         longUrl
       }, 200, headers);
-
-    } catch (error) {
-      return jsonResponse({ error: 'Invalid request body' }, 400, headers);
-    }
-  }
-
-  // POST /api/verify - Verify password
-  if (path === '/api/verify' && method === 'POST') {
-    try {
-      const body = await request.json();
-      const { code, password } = body;
-
-      if (!code || !password) {
-        return jsonResponse({ error: 'Missing code or password' }, 400, headers);
-      }
-
-      // 获取存储的密码哈希
-      const storedHash = await env.URL_DB.get(`${code}:pass`);
-      
-      if (!storedHash) {
-        return jsonResponse({ error: 'URL not found or not password protected' }, 404, headers);
-      }
-
-      // 验证密码
-      const inputHash = await hashPassword(password);
-      
-      if (inputHash === storedHash) {
-        // 密码正确，生成临时 token
-        const token = generateShortCode(32);
-        // Token 有效期 5 分钟
-        await env.URL_DB.put(`${code}:token:${token}`, 'valid', { expirationTtl: 300 });
-        
-        return jsonResponse({
-          success: true,
-          token
-        }, 200, headers);
-      } else {
-        return jsonResponse({ error: 'Incorrect password' }, 401, headers);
-      }
 
     } catch (error) {
       return jsonResponse({ error: 'Invalid request body' }, 400, headers);
@@ -222,7 +152,7 @@ async function handleAPI(request, env, path, method, corsHeaders) {
     const urls = [];
 
     for (const key of list.keys) {
-      // 只处理主链接，跳过元数据和密码等附加数据
+      // 只处理主链接，跳过元数据等附加数据
       if (!key.name.includes(':')) {
         const longUrl = await env.URL_DB.get(key.name);
         const metaJson = await env.URL_DB.get(`${key.name}:meta`);
@@ -250,7 +180,6 @@ async function handleAPI(request, env, path, method, corsHeaders) {
     // 删除所有相关数据
     await env.URL_DB.delete(shortCode);
     await env.URL_DB.delete(`${shortCode}:meta`);
-    await env.URL_DB.delete(`${shortCode}:pass`);
     await env.URL_DB.delete(`${shortCode}:visits`);
 
     return jsonResponse({ success: true }, 200, headers);
@@ -309,13 +238,3 @@ function isAuthorized(request, env) {
   const token = authHeader.replace('Bearer ', '');
   return token === env.ADMIN_TOKEN;
 }
-
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
