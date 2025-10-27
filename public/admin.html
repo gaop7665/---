@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理面板 - URL 短链接服务</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +14,7 @@
         }
 
         body {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace, 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
             background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
@@ -28,31 +30,6 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-        }
-
-        .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(13, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #0dffff;
-            border: 2px solid rgba(13, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
-            transition: all 0.3s;
-            z-index: 1000;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        .lang-switch:hover {
-            background: rgba(13, 255, 255, 0.2);
-            box-shadow: 0 0 30px rgba(13, 255, 255, 0.6);
-            transform: translateY(-2px);
         }
 
         .container {
@@ -113,8 +90,7 @@
             letter-spacing: 1px;
         }
 
-        input[type="password"],
-        input[type="text"] {
+        input[type="password"] {
             width: 100%;
             padding: 15px;
             border: 2px solid rgba(13, 255, 255, 0.3);
@@ -126,8 +102,7 @@
             font-family: 'Consolas', monospace;
         }
 
-        input[type="password"]:focus,
-        input[type="text"]:focus {
+        input[type="password"]:focus {
             outline: none;
             border-color: #0dffff;
             box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
@@ -286,46 +261,126 @@
             color: #8b95c9;
         }
 
+        /* 科技感底部信息 */
         .footer {
-            margin-top: 30px;
+            margin-top: 40px;
             text-align: center;
-            color: #8b95c9;
-            font-size: 14px;
         }
 
-        .footer a {
+        .footer-content {
+            display: inline-block;
+            padding: 20px 30px;
+            background: rgba(10, 14, 39, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(13, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(13, 255, 255, 0.1);
+        }
+
+        .footer-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0dffff;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.5);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            animation: brandGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes brandGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(13, 255, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(13, 255, 255, 0.8), 0 0 30px rgba(13, 255, 255, 0.4);
+            }
+        }
+
+        .footer-brand a {
             color: #0dffff;
             text-decoration: none;
-            font-weight: 600;
             transition: all 0.3s;
+            display: inline-block;
         }
 
-        .footer a:hover {
-            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
+        .footer-brand a:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(13, 255, 255, 1);
+        }
+
+        .footer-brand .brand-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 20px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer-links {
+            font-family: 'Consolas', monospace;
+            font-size: 11px;
+            color: #8b95c9;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links a {
+            color: #6b8dd6;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .footer-links a:hover {
+            color: #0dffff;
+            text-shadow: 0 0 5px rgba(13, 255, 255, 0.5);
+        }
+
+        .footer-links img {
+            vertical-align: middle;
+            filter: brightness(0.8);
+            transition: filter 0.3s;
+        }
+
+        .footer-links a:hover img {
+            filter: brightness(1.2) drop-shadow(0 0 3px rgba(13, 255, 255, 0.5));
+        }
+
+        .divider {
+            display: inline-block;
+            margin: 0 8px;
+            color: rgba(13, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
 
-    <div class="lang-switch" onclick="toggleLanguage()">
-        <span id="langText">中文</span>
-    </div>
-
     <div class="container">
-        <h1 id="title">🔐 管理面板</h1>
+        <h1>🔐 管理面板</h1>
 
         <div class="login-form" id="loginForm">
             <div class="input-group">
-                <label for="adminToken" id="labelToken">管理员令牌</label>
+                <label for="adminToken">管理员令牌</label>
                 <input 
                     type="password" 
                     id="adminToken" 
                     placeholder="输入您的管理员令牌"
                 >
             </div>
-            <button class="button" onclick="login()" id="loginBtn">登录</button>
-            <a href="index.html" class="back-link" id="backLink">← 返回主页</a>
+            <button class="button" onclick="login()">登录</button>
+            <a href="index.html" class="back-link">← 返回主页</a>
         </div>
 
         <div class="error" id="error"></div>
@@ -334,35 +389,44 @@
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-value" id="totalUrls">0</div>
-                    <div class="stat-label" id="totalUrlsLabel">总链接数</div>
+                    <div class="stat-label">总链接数</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="totalVisits">0</div>
-                    <div class="stat-label" id="totalVisitsLabel">总访问量</div>
+                    <div class="stat-label">总访问量</div>
                 </div>
             </div>
 
-            <h2 id="urlListTitle" style="color: #0dffff; margin-bottom: 10px;">所有短链接</h2>
+            <h2 style="color: #0dffff; margin-bottom: 10px;">所有短链接</h2>
             <div id="urlList">
-                <div class="loading" id="loadingText">加载中...</div>
+                <div class="loading">加载中...</div>
             </div>
 
-            <button class="button" onclick="logout()" style="max-width: 200px; margin-top: 20px;" id="logoutBtn">
+            <button class="button" onclick="logout()" style="max-width: 200px; margin-top: 20px;">
                 退出登录
             </button>
             <br>
-            <a href="index.html" class="back-link" id="backLink2">← 返回主页</a>
+            <a href="index.html" class="back-link">← 返回主页</a>
         </div>
 
         <div class="footer">
-            <p style="margin-bottom: 10px;">
-                <span id="footerText">由 <a href="http://www.xswweb.com/" target="_blank">新思维网</a> 提供支持</span>
-            </p>
-            <p style="font-size: 12px; opacity: 0.9;">
-                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer nofollow" style="margin-right: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 湘ICP备13012156号-3</a>
-                |
-                <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=43312402001037" target="_blank" rel="noreferrer nofollow" style="margin-left: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 公网安备 43312402001037号</a>
-            </p>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-icon">⚡</span>
+                    POWERED BY <a href="http://www.xswweb.com/" target="_blank">新思维网</a>
+                </div>
+                <div class="footer-links">
+                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer nofollow">
+                        <img src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt="" style="height: 14px; margin-right: 2px;">
+                        湘ICP备13012156号-3
+                    </a>
+                    <span class="divider">|</span>
+                    <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=43312402001037" target="_blank" rel="noreferrer nofollow">
+                        <img src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt="" style="height: 14px; margin-right: 2px;">
+                        公网安备 43312402001037号
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -443,84 +507,6 @@
         const API_BASE = 'https://link.xswweb.com';
         let adminToken = localStorage.getItem('adminToken');
 
-        const translations = {
-            zh: {
-                title: '🔐 管理面板',
-                labelToken: '管理员令牌',
-                loginBtn: '登录',
-                backLink: '← 返回主页',
-                totalUrlsLabel: '总链接数',
-                totalVisitsLabel: '总访问量',
-                urlListTitle: '所有短链接',
-                loadingText: '加载中...',
-                logoutBtn: '退出登录',
-                langText: '中文',
-                tokenPlaceholder: '输入您的管理员令牌',
-                errorToken: '请输入管理员令牌',
-                errorInvalid: '管理员令牌无效',
-                errorNetwork: '网络错误，请检查连接',
-                errorLoad: '加载数据失败',
-                confirmDelete: '确定要删除',
-                errorDelete: '删除失败',
-                thShortCode: '短代码',
-                thLongUrl: '长 URL',
-                thVisits: '访问量',
-                thCreated: '创建时间',
-                thAction: '操作',
-                btnDelete: '删除'
-            },
-            en: {
-                title: '🔐 Admin Panel',
-                labelToken: 'Admin Token',
-                loginBtn: 'Login',
-                backLink: '← Back to Home',
-                totalUrlsLabel: 'Total URLs',
-                totalVisitsLabel: 'Total Visits',
-                urlListTitle: 'All Short URLs',
-                loadingText: 'Loading...',
-                logoutBtn: 'Logout',
-                langText: 'English',
-                tokenPlaceholder: 'Enter your admin token',
-                errorToken: 'Please enter admin token',
-                errorInvalid: 'Invalid admin token',
-                errorNetwork: 'Network error. Please check your connection.',
-                errorLoad: 'Failed to load data',
-                confirmDelete: 'Are you sure you want to delete',
-                errorDelete: 'Failed to delete URL',
-                thShortCode: 'Short Code',
-                thLongUrl: 'Long URL',
-                thVisits: 'Visits',
-                thCreated: 'Created',
-                thAction: 'Action',
-                btnDelete: 'Delete'
-            }
-        };
-
-        let currentLang = 'zh';
-
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            updateLanguage();
-        }
-
-        function updateLanguage() {
-            const t = translations[currentLang];
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('labelToken').textContent = t.labelToken;
-            document.getElementById('loginBtn').textContent = t.loginBtn;
-            document.getElementById('backLink').textContent = t.backLink;
-            document.getElementById('totalUrlsLabel').textContent = t.totalUrlsLabel;
-            document.getElementById('totalVisitsLabel').textContent = t.totalVisitsLabel;
-            document.getElementById('urlListTitle').textContent = t.urlListTitle;
-            document.getElementById('loadingText').textContent = t.loadingText;
-            document.getElementById('logoutBtn').textContent = t.logoutBtn;
-            document.getElementById('backLink2').textContent = t.backLink;
-            document.getElementById('langText').textContent = t.langText;
-            document.getElementById('adminToken').placeholder = t.tokenPlaceholder;
-            
-            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-        }
-
         if (adminToken) {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('dashboard').classList.add('show');
@@ -530,11 +516,10 @@
         async function login() {
             const token = document.getElementById('adminToken').value;
             const error = document.getElementById('error');
-            const t = translations[currentLang];
             error.classList.remove('show');
 
             if (!token) {
-                error.textContent = t.errorToken;
+                error.textContent = '请输入管理员令牌';
                 error.classList.add('show');
                 return;
             }
@@ -553,17 +538,16 @@
                     document.getElementById('dashboard').classList.add('show');
                     loadDashboard();
                 } else {
-                    error.textContent = t.errorInvalid;
+                    error.textContent = '管理员令牌无效';
                     error.classList.add('show');
                 }
             } catch (err) {
-                error.textContent = t.errorNetwork;
+                error.textContent = '网络错误，请检查连接';
                 error.classList.add('show');
             }
         }
 
         async function loadDashboard() {
-            const t = translations[currentLang];
             try {
                 const response = await fetch(`${API_BASE}/api/list`, {
                     headers: {
@@ -586,11 +570,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>${t.thShortCode}</th>
-                                <th>${t.thLongUrl}</th>
-                                <th>${t.thVisits}</th>
-                                <th>${t.thCreated}</th>
-                                <th>${t.thAction}</th>
+                                <th>短代码</th>
+                                <th>长 URL</th>
+                                <th>访问量</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -606,7 +590,7 @@
                             <td>${createdDate}</td>
                             <td>
                                 <button class="delete-btn" onclick="deleteUrl('${url.shortCode}')">
-                                    ${t.btnDelete}
+                                    删除
                                 </button>
                             </td>
                         </tr>
@@ -622,13 +606,12 @@
 
             } catch (err) {
                 document.getElementById('urlList').innerHTML = 
-                    `<p style="color: #ff3250; text-align: center;">${t.errorLoad}</p>`;
+                    `<p style="color: #ff3250; text-align: center;">加载数据失败</p>`;
             }
         }
 
         async function deleteUrl(shortCode) {
-            const t = translations[currentLang];
-            if (!confirm(`${t.confirmDelete} "${shortCode}"?`)) {
+            if (!confirm(`确定要删除 "${shortCode}"?`)) {
                 return;
             }
 
@@ -643,10 +626,10 @@
                 if (response.ok) {
                     loadDashboard();
                 } else {
-                    alert(t.errorDelete);
+                    alert('删除失败');
                 }
             } catch (err) {
-                alert(t.errorNetwork);
+                alert('网络错误，请检查连接');
             }
         }
 

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL 短链接服务 - 让你的链接简短精炼</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +14,7 @@
         }
 
         body {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace, 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
             background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
@@ -32,31 +34,6 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-        }
-
-        .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(13, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #0dffff;
-            border: 2px solid rgba(13, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
-            transition: all 0.3s;
-            z-index: 1000;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        .lang-switch:hover {
-            background: rgba(13, 255, 255, 0.2);
-            box-shadow: 0 0 30px rgba(13, 255, 255, 0.6);
-            transform: translateY(-2px);
         }
 
         .container {
@@ -146,7 +123,6 @@
             letter-spacing: 1px;
         }
 
-        input[type="text"],
         input[type="url"] {
             width: 100%;
             padding: 15px;
@@ -159,7 +135,6 @@
             font-family: 'Consolas', monospace;
         }
 
-        input[type="text"]:focus,
         input[type="url"]:focus {
             outline: none;
             border-color: #0dffff;
@@ -298,56 +273,6 @@
             display: block;
         }
 
-        .advanced-options {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(13, 255, 255, 0.2);
-        }
-
-        .toggle-advanced {
-            color: #0dffff;
-            cursor: pointer;
-            font-weight: 600;
-            text-align: center;
-            display: block;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .toggle-advanced:hover {
-            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
-        }
-
-        .advanced-content {
-            display: none;
-        }
-
-        .advanced-content.show {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #8b95c9;
-            font-size: 14px;
-            z-index: 1;
-            position: relative;
-        }
-
-        .footer a {
-            color: #0dffff;
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 10px;
-            transition: all 0.3s;
-        }
-
-        .footer a:hover {
-            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
-        }
-
         .stats-link {
             text-align: center;
             margin-top: 10px;
@@ -362,22 +287,122 @@
         strong {
             color: #0dffff;
         }
+
+        /* 科技感底部信息 */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        .footer-content {
+            display: inline-block;
+            padding: 20px 30px;
+            background: rgba(10, 14, 39, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(13, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(13, 255, 255, 0.1);
+        }
+
+        .footer-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0dffff;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.5);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            animation: brandGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes brandGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(13, 255, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(13, 255, 255, 0.8), 0 0 30px rgba(13, 255, 255, 0.4);
+            }
+        }
+
+        .footer-brand a {
+            color: #0dffff;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .footer-brand a:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(13, 255, 255, 1);
+        }
+
+        .footer-brand .brand-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 20px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer-links {
+            font-family: 'Consolas', monospace;
+            font-size: 11px;
+            color: #8b95c9;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links a {
+            color: #6b8dd6;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .footer-links a:hover {
+            color: #0dffff;
+            text-shadow: 0 0 5px rgba(13, 255, 255, 0.5);
+        }
+
+        .footer-links img {
+            vertical-align: middle;
+            filter: brightness(0.8);
+            transition: filter 0.3s;
+        }
+
+        .footer-links a:hover img {
+            filter: brightness(1.2) drop-shadow(0 0 3px rgba(13, 255, 255, 0.5));
+        }
+
+        .divider {
+            display: inline-block;
+            margin: 0 8px;
+            color: rgba(13, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
 
-    <div class="lang-switch" onclick="toggleLanguage()">
-        <span id="langText">中文</span>
-    </div>
-
     <div class="container">
-        <h1 id="title">🔗 URL 缩短器</h1>
-        <p class="subtitle" id="subtitle">让你的链接简短而精炼</p>
+        <h1>🔗 URL 缩短器</h1>
+        <p class="subtitle">让你的链接简短而精炼</p>
 
         <form id="shortenForm">
             <div class="input-group">
-                <label for="longUrl" id="labelUrl">输入您的长 URL</label>
+                <label for="longUrl">输入您的长 URL</label>
                 <input 
                     type="url" 
                     id="longUrl" 
@@ -386,34 +411,19 @@
                 >
             </div>
 
-            <div class="advanced-options">
-                <span class="toggle-advanced" onclick="toggleAdvanced()" id="advancedToggle">⚙️ 高级选项</span>
-                <div class="advanced-content" id="advancedContent">
-                    <div class="input-group">
-                        <label for="customCode" id="labelCustom">自定义短代码（可选）</label>
-                        <input 
-                            type="text" 
-                            id="customCode" 
-                            placeholder="my-custom-link"
-                            pattern="[a-zA-Z0-9-_]+"
-                        >
-                    </div>
-                </div>
-            </div>
-
             <button type="submit" class="button" id="submitBtn">
                 缩短 URL
             </button>
         </form>
 
         <div class="result" id="result">
-            <strong id="successText">✅ 成功！您的短链接：</strong>
+            <strong>✅ 成功！您的短链接：</strong>
             <div class="short-url">
                 <input type="text" id="shortUrlInput" readonly>
-                <button class="copy-btn" onclick="copyUrl()" id="copyBtn">复制</button>
+                <button class="copy-btn" onclick="copyUrl()">复制</button>
             </div>
             <div class="stats-link">
-                <a href="#" id="statsLink" target="_blank" id="statsLinkText">查看统计数据</a>
+                <a href="#" id="statsLink" target="_blank">查看统计数据</a>
             </div>
         </div>
 
@@ -421,15 +431,23 @@
     </div>
 
     <div class="footer">
-        <p style="margin-bottom: 10px;">
-            <span id="footerText">由 <a href="http://www.xswweb.com/" target="_blank">新思维网</a> 提供支持</span>
-            <a href="admin.html" id="adminLink" style="margin-left: 15px;">管理面板</a>
-        </p>
-        <p style="font-size: 12px; opacity: 0.9;">
-            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer nofollow" style="margin-right: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 湘ICP备13012156号-3</a>
-            |
-            <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=43312402001037" target="_blank" rel="noreferrer nofollow" style="margin-left: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 公网安备 43312402001037号</a>
-        </p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="brand-icon">⚡</span>
+                POWERED BY <a href="http://www.xswweb.com/" target="_blank">新思维网</a>
+            </div>
+            <div class="footer-links">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer nofollow">
+                    <img src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt="" style="height: 14px; margin-right: 2px;">
+                    湘ICP备13012156号-3
+                </a>
+                <span class="divider">|</span>
+                <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=43312402001037" target="_blank" rel="noreferrer nofollow">
+                    <img src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt="" style="height: 14px; margin-right: 2px;">
+                    公网安备 43312402001037号
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -508,76 +526,14 @@
         });
 
         const API_BASE = 'https://link.xswweb.com';
-        
-        // 语言翻译数据
-        const translations = {
-            zh: {
-                title: '🔗 URL 缩短器',
-                subtitle: '让你的链接简短而精炼',
-                labelUrl: '输入您的长 URL',
-                advancedToggle: '⚙️ 高级选项',
-                labelCustom: '自定义短代码（可选）',
-                submitBtn: '缩短 URL',
-                successText: '✅ 成功！您的短链接：',
-                copyBtn: '复制',
-                statsLinkText: '查看统计数据',
-                footerText: '提供支持',
-                adminLink: '管理面板',
-                langText: '中文',
-                creating: '创建中...',
-                copied: '已复制！'
-            },
-            en: {
-                title: '🔗 URL Shortener',
-                subtitle: 'Make your links short and sweet',
-                labelUrl: 'Enter your long URL',
-                advancedToggle: '⚙️ Advanced Options',
-                labelCustom: 'Custom Short Code (optional)',
-                submitBtn: 'Shorten URL',
-                successText: '✅ Success! Your short URL:',
-                copyBtn: 'Copy',
-                statsLinkText: 'View Statistics',
-                footerText: 'Powered by',
-                adminLink: 'Admin Panel',
-                langText: 'English',
-                creating: 'Creating...',
-                copied: 'Copied!'
-            }
-        };
-
-        let currentLang = 'zh';
-
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            updateLanguage();
-        }
-
-        function updateLanguage() {
-            const t = translations[currentLang];
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('subtitle').textContent = t.subtitle;
-            document.getElementById('labelUrl').textContent = t.labelUrl;
-            document.getElementById('advancedToggle').textContent = t.advancedToggle;
-            document.getElementById('labelCustom').textContent = t.labelCustom;
-            document.getElementById('submitBtn').textContent = t.submitBtn;
-            document.getElementById('successText').textContent = t.successText;
-            document.getElementById('copyBtn').textContent = t.copyBtn;
-            document.getElementById('statsLinkText').textContent = t.statsLinkText;
-            document.getElementById('adminLink').textContent = t.adminLink;
-            document.getElementById('langText').textContent = t.langText;
-            
-            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-        }
 
         document.getElementById('shortenForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const longUrl = document.getElementById('longUrl').value;
-            const customCode = document.getElementById('customCode').value;
             const submitBtn = document.getElementById('submitBtn');
             const result = document.getElementById('result');
             const error = document.getElementById('error');
-            const t = translations[currentLang];
 
             // Hide previous results
             result.classList.remove('show');
@@ -585,7 +541,7 @@
 
             // Disable button
             submitBtn.disabled = true;
-            submitBtn.textContent = t.creating;
+            submitBtn.textContent = '创建中...';
 
             try {
                 const response = await fetch(`${API_BASE}/api/shorten`, {
@@ -594,8 +550,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        url: longUrl,
-                        customCode: customCode || undefined
+                        url: longUrl
                     })
                 });
 
@@ -606,22 +561,17 @@
                     document.getElementById('statsLink').href = `stats.html?code=${data.shortCode}`;
                     result.classList.add('show');
                 } else {
-                    error.textContent = data.error || (currentLang === 'zh' ? '发生错误' : 'An error occurred');
+                    error.textContent = data.error || '发生错误';
                     error.classList.add('show');
                 }
             } catch (err) {
-                error.textContent = currentLang === 'zh' ? '网络错误，请检查 API 端点' : 'Network error. Please check your API endpoint.';
+                error.textContent = '网络错误，请检查 API 端点';
                 error.classList.add('show');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = t.submitBtn;
+                submitBtn.textContent = '缩短 URL';
             }
         });
-
-        function toggleAdvanced() {
-            const content = document.getElementById('advancedContent');
-            content.classList.toggle('show');
-        }
 
         function copyUrl() {
             const input = document.getElementById('shortUrlInput');
@@ -630,8 +580,7 @@
             
             const btn = event.target;
             const originalText = btn.textContent;
-            const t = translations[currentLang];
-            btn.textContent = t.copied;
+            btn.textContent = '已复制！';
             setTimeout(() => {
                 btn.textContent = originalText;
             }, 2000);
