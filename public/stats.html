@@ -12,55 +12,98 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace, 'Microsoft YaHei', sans-serif;
+            background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 动态网格背景 */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
         .lang-switch {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: rgba(13, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
-            color: #667eea;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: #0dffff;
+            border: 2px solid rgba(13, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
             transition: all 0.3s;
+            z-index: 1000;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
 
         .lang-switch:hover {
-            background: white;
+            background: rgba(13, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(13, 255, 255, 0.6);
             transform: translateY(-2px);
         }
 
         .container {
             max-width: 600px;
             width: 100%;
-            background: white;
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(13, 255, 255, 0.2);
+            border: 2px solid rgba(13, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+            animation: containerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes containerGlow {
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(13, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(13, 255, 255, 0.4);
+            }
         }
 
         h1 {
-            color: #333;
+            color: #0dffff;
             margin-bottom: 30px;
             text-align: center;
+            text-shadow: 0 0 20px rgba(13, 255, 255, 0.5);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(13, 255, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(13, 255, 255, 0.8);
+            }
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
             padding: 15px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid rgba(13, 255, 255, 0.2);
         }
 
         .stat-row:last-child {
@@ -69,74 +112,84 @@
 
         .stat-label {
             font-weight: 600;
-            color: #666;
+            color: #8b95c9;
         }
 
         .stat-value {
-            color: #333;
+            color: #fff;
             word-break: break-all;
         }
 
         .highlight {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #0dffff;
             font-weight: bold;
             font-size: 1.5em;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.5);
         }
 
         .back-link {
             display: inline-block;
             margin-top: 30px;
-            color: #667eea;
+            color: #0dffff;
             text-decoration: none;
             font-weight: 600;
             text-align: center;
             display: block;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
         }
 
         .loading {
             text-align: center;
-            color: #666;
+            color: #8b95c9;
             padding: 40px;
         }
 
         .error {
             text-align: center;
-            color: #e53e3e;
+            color: #ff3250;
             padding: 40px;
         }
 
         .url-link {
-            color: #667eea;
+            color: #0dffff;
             text-decoration: none;
+            transition: all 0.3s;
         }
 
         .url-link:hover {
-            text-decoration: underline;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
         }
 
         .footer {
             margin-top: 30px;
             text-align: center;
-            color: white;
+            color: #8b95c9;
             font-size: 14px;
+            z-index: 1;
+            position: relative;
         }
 
         .footer a {
-            color: white;
+            color: #0dffff;
             text-decoration: none;
             font-weight: 600;
+            transition: all 0.3s;
         }
 
         .footer a:hover {
-            text-decoration: underline;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
         }
     </style>
 </head>
 <body>
+    <canvas id="canvas"></canvas>
+
     <div class="lang-switch" onclick="toggleLanguage()">
-        <span id="langText">English</span>
+        <span id="langText">中文</span>
     </div>
 
     <div class="container">
@@ -159,6 +212,79 @@
     </div>
 
     <script>
+        // 动态网格背景
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(13, 255, 255, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(13, 255, 255, ${0.2 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
         const API_BASE = 'https://link.xswweb.com';
         const urlParams = new URLSearchParams(window.location.search);
         const shortCode = urlParams.get('code');
@@ -168,7 +294,7 @@
                 title: '📊 URL 统计',
                 loadingText: '加载统计数据...',
                 backLink: '← 返回主页',
-                langText: 'English',
+                langText: '中文',
                 errorNoCode: '未提供短代码',
                 errorNotFound: '❌ URL 未找到',
                 labelShortCode: '短代码：',
@@ -182,7 +308,7 @@
                 title: '📊 URL Statistics',
                 loadingText: 'Loading statistics...',
                 backLink: '← Back to Home',
-                langText: '中文',
+                langText: 'English',
                 errorNoCode: 'No short code provided',
                 errorNotFound: '❌ URL not found',
                 labelShortCode: 'Short Code:',
@@ -241,7 +367,7 @@
                 document.getElementById('content').innerHTML = `
                     <div class="stat-row">
                         <span class="stat-label">${t.labelShortCode}</span>
-                        <span class="stat-value"><strong>${data.shortCode}</strong></span>
+                        <span class="stat-value"><strong style="color: #0dffff;">${data.shortCode}</strong></span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">${t.labelLongUrl}</span>
@@ -273,4 +399,3 @@
     </script>
 </body>
 </html>
-

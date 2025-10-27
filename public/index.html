@@ -12,53 +12,122 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace, 'Microsoft YaHei', sans-serif;
+            background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 动态网格背景 */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
         .lang-switch {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: rgba(13, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
-            color: #667eea;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: #0dffff;
+            border: 2px solid rgba(13, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
             transition: all 0.3s;
+            z-index: 1000;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
 
         .lang-switch:hover {
-            background: white;
+            background: rgba(13, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(13, 255, 255, 0.6);
             transform: translateY(-2px);
         }
 
         .container {
             max-width: 600px;
             width: 100%;
-            background: white;
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(13, 255, 255, 0.2);
+            border: 2px solid rgba(13, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+            animation: containerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes containerGlow {
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(13, 255, 255, 0.2), 0 0 20px rgba(13, 255, 255, 0.1);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(13, 255, 255, 0.4), 0 0 40px rgba(13, 255, 255, 0.2);
+            }
+        }
+
+        /* 扫描线效果 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0dffff, transparent);
+            animation: scan 3s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
         }
 
         h1 {
-            color: #333;
+            color: #0dffff;
             margin-bottom: 10px;
             font-size: 2.5em;
             text-align: center;
+            text-shadow: 0 0 20px rgba(13, 255, 255, 0.5);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(13, 255, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(13, 255, 255, 0.8), 0 0 40px rgba(13, 255, 255, 0.5);
+            }
         }
 
         .subtitle {
-            color: #666;
+            color: #8b95c9;
             text-align: center;
             margin-bottom: 30px;
             font-size: 1.1em;
@@ -71,45 +140,76 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: #0dffff;
             font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
 
         input[type="text"],
-        input[type="url"],
-        input[type="password"] {
+        input[type="url"] {
             width: 100%;
             padding: 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid rgba(13, 255, 255, 0.3);
             border-radius: 10px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            background: rgba(13, 255, 255, 0.05);
+            color: #fff;
+            transition: all 0.3s;
+            font-family: 'Consolas', monospace;
         }
 
         input[type="text"]:focus,
-        input[type="url"]:focus,
-        input[type="password"]:focus {
+        input[type="url"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0dffff;
+            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
+            background: rgba(13, 255, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(139, 149, 201, 0.5);
         }
 
         .button {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #0dffff 0%, #0a7aff 100%);
+            color: #0a0e27;
             border: none;
             border-radius: 10px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .button:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(13, 255, 255, 0.4);
         }
 
         .button:active {
@@ -125,9 +225,10 @@
             display: none;
             margin-top: 20px;
             padding: 20px;
-            background: #f0f7ff;
+            background: rgba(13, 255, 255, 0.1);
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #0dffff;
+            border: 2px solid rgba(13, 255, 255, 0.3);
         }
 
         .result.show {
@@ -156,34 +257,41 @@
         .short-url input {
             flex: 1;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(13, 255, 255, 0.3);
             border-radius: 5px;
             font-size: 16px;
+            background: rgba(13, 255, 255, 0.05);
+            color: #0dffff;
+            font-family: 'Consolas', monospace;
         }
 
         .copy-btn {
             padding: 10px 20px;
-            background: #667eea;
-            color: white;
+            background: #0dffff;
+            color: #0a0e27;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
+            font-weight: 700;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .copy-btn:hover {
-            background: #5568d3;
+            background: #0a7aff;
+            box-shadow: 0 5px 15px rgba(13, 255, 255, 0.4);
         }
 
         .error {
             display: none;
             margin-top: 20px;
             padding: 15px;
-            background: #fee;
+            background: rgba(255, 50, 80, 0.1);
             border-radius: 10px;
-            border-left: 4px solid #e53e3e;
-            color: #e53e3e;
+            border-left: 4px solid #ff3250;
+            color: #ff3250;
+            border: 2px solid rgba(255, 50, 80, 0.3);
         }
 
         .error.show {
@@ -193,16 +301,21 @@
         .advanced-options {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(13, 255, 255, 0.2);
         }
 
         .toggle-advanced {
-            color: #667eea;
+            color: #0dffff;
             cursor: pointer;
             font-weight: 600;
             text-align: center;
             display: block;
             margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .toggle-advanced:hover {
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
         }
 
         .advanced-content {
@@ -211,24 +324,28 @@
 
         .advanced-content.show {
             display: block;
+            animation: slideIn 0.3s ease-out;
         }
 
         .footer {
             margin-top: 30px;
             text-align: center;
-            color: white;
+            color: #8b95c9;
             font-size: 14px;
+            z-index: 1;
+            position: relative;
         }
 
         .footer a {
-            color: white;
+            color: #0dffff;
             text-decoration: none;
             font-weight: 600;
             margin-left: 10px;
+            transition: all 0.3s;
         }
 
         .footer a:hover {
-            text-decoration: underline;
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
         }
 
         .stats-link {
@@ -237,15 +354,21 @@
         }
 
         .stats-link a {
-            color: #667eea;
+            color: #0dffff;
             text-decoration: none;
             font-weight: 600;
+        }
+
+        strong {
+            color: #0dffff;
         }
     </style>
 </head>
 <body>
+    <canvas id="canvas"></canvas>
+
     <div class="lang-switch" onclick="toggleLanguage()">
-        <span id="langText">English</span>
+        <span id="langText">中文</span>
     </div>
 
     <div class="container">
@@ -310,6 +433,80 @@
     </div>
 
     <script>
+        // 动态网格背景
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(13, 255, 255, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // 绘制连接线
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(13, 255, 255, ${0.2 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
         const API_BASE = 'https://link.xswweb.com';
         
         // 语言翻译数据
@@ -326,7 +523,7 @@
                 statsLinkText: '查看统计数据',
                 footerText: '提供支持',
                 adminLink: '管理面板',
-                langText: 'English',
+                langText: '中文',
                 creating: '创建中...',
                 copied: '已复制！'
             },
@@ -342,7 +539,7 @@
                 statsLinkText: 'View Statistics',
                 footerText: 'Powered by',
                 adminLink: 'Admin Panel',
-                langText: '中文',
+                langText: 'English',
                 creating: 'Creating...',
                 copied: 'Copied!'
             }
@@ -442,4 +639,3 @@
     </script>
 </body>
 </html>
-
