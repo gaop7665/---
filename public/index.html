@@ -275,17 +275,6 @@
                             pattern="[a-zA-Z0-9-_]+"
                         >
                     </div>
-                    <div class="input-group">
-                        <label for="password" id="labelPassword">密码保护（可选）</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            placeholder="输入密码"
-                        >
-                        <small style="color: #999; margin-top: 5px; display: block;" id="passwordHint">
-                            设置后，访问短链接需要输入密码
-                        </small>
-                    </div>
                 </div>
             </div>
 
@@ -309,8 +298,15 @@
     </div>
 
     <div class="footer">
-        <span id="footerText">由 <a href="https://www.xswweb.com" target="_blank">www.xswweb.com</a> 提供支持</span>
-        <a href="admin.html" id="adminLink">管理面板</a>
+        <p style="margin-bottom: 10px;">
+            <span id="footerText">由 <a href="http://www.xswweb.com/" target="_blank">新思维网</a> 提供支持</span>
+            <a href="admin.html" id="adminLink" style="margin-left: 15px;">管理面板</a>
+        </p>
+        <p style="font-size: 12px; opacity: 0.9;">
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer nofollow" style="margin-right: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 湘ICP备13012156号-3</a>
+            |
+            <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=43312402001037" target="_blank" rel="noreferrer nofollow" style="margin-left: 10px;"><img style="display: inline-block; height: 18px; margin-right: 2px; vertical-align: middle;" src="https://cnd.xswweb.com/img/2025/01/logo01.6189a29f.png" alt=""> 公网安备 43312402001037号</a>
+        </p>
     </div>
 
     <script>
@@ -324,8 +320,6 @@
                 labelUrl: '输入您的长 URL',
                 advancedToggle: '⚙️ 高级选项',
                 labelCustom: '自定义短代码（可选）',
-                labelPassword: '密码保护（可选）',
-                passwordHint: '设置后，访问短链接需要输入密码',
                 submitBtn: '缩短 URL',
                 successText: '✅ 成功！您的短链接：',
                 copyBtn: '复制',
@@ -342,8 +336,6 @@
                 labelUrl: 'Enter your long URL',
                 advancedToggle: '⚙️ Advanced Options',
                 labelCustom: 'Custom Short Code (optional)',
-                labelPassword: 'Password Protection (optional)',
-                passwordHint: 'Password required to access this link',
                 submitBtn: 'Shorten URL',
                 successText: '✅ Success! Your short URL:',
                 copyBtn: 'Copy',
@@ -370,8 +362,6 @@
             document.getElementById('labelUrl').textContent = t.labelUrl;
             document.getElementById('advancedToggle').textContent = t.advancedToggle;
             document.getElementById('labelCustom').textContent = t.labelCustom;
-            document.getElementById('labelPassword').textContent = t.labelPassword;
-            document.getElementById('passwordHint').textContent = t.passwordHint;
             document.getElementById('submitBtn').textContent = t.submitBtn;
             document.getElementById('successText').textContent = t.successText;
             document.getElementById('copyBtn').textContent = t.copyBtn;
@@ -387,7 +377,6 @@
             
             const longUrl = document.getElementById('longUrl').value;
             const customCode = document.getElementById('customCode').value;
-            const password = document.getElementById('password').value;
             const submitBtn = document.getElementById('submitBtn');
             const result = document.getElementById('result');
             const error = document.getElementById('error');
@@ -409,8 +398,7 @@
                     },
                     body: JSON.stringify({
                         url: longUrl,
-                        customCode: customCode || undefined,
-                        password: password || undefined
+                        customCode: customCode || undefined
                     })
                 });
 
