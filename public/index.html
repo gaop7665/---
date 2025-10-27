@@ -282,6 +282,35 @@
             color: #0dffff;
             text-decoration: none;
             font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .stats-link a:hover {
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
+        }
+
+        .back-home-btn {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(13, 255, 255, 0.1);
+            color: #0dffff;
+            border: 2px solid rgba(13, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        .back-home-btn:hover {
+            background: rgba(13, 255, 255, 0.2);
+            border-color: #0dffff;
+            box-shadow: 0 0 20px rgba(13, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         strong {
@@ -425,6 +454,7 @@
             <div class="stats-link">
                 <a href="#" id="statsLink" target="_blank">查看统计数据</a>
             </div>
+            <button class="back-home-btn" onclick="resetForm()">🏠 返回首页</button>
         </div>
 
         <div class="error" id="error"></div>
@@ -584,6 +614,18 @@
             setTimeout(() => {
                 btn.textContent = originalText;
             }, 2000);
+        }
+
+        function resetForm() {
+            // 清空输入框
+            document.getElementById('longUrl').value = '';
+            
+            // 隐藏结果和错误
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+            
+            // 聚焦到输入框
+            document.getElementById('longUrl').focus();
         }
     </script>
 </body>
