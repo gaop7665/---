@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CF URL Shortener - Shorten Your Links</title>
+    <title>URL 短链接服务 - 让你的链接简短精炼</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -20,6 +20,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            background: white;
+            transform: translateY(-2px);
         }
 
         .container {
@@ -205,6 +224,11 @@
             color: white;
             text-decoration: none;
             font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
         }
 
         .stats-link {
@@ -220,13 +244,17 @@
     </style>
 </head>
 <body>
+    <div class="lang-switch" onclick="toggleLanguage()">
+        <span id="langText">English</span>
+    </div>
+
     <div class="container">
-        <h1>🔗 URL Shortener</h1>
-        <p class="subtitle">Make your links short and sweet</p>
+        <h1 id="title">🔗 URL 缩短器</h1>
+        <p class="subtitle" id="subtitle">让你的链接简短而精炼</p>
 
         <form id="shortenForm">
             <div class="input-group">
-                <label for="longUrl">Enter your long URL</label>
+                <label for="longUrl" id="labelUrl">输入您的长 URL</label>
                 <input 
                     type="url" 
                     id="longUrl" 
@@ -236,10 +264,10 @@
             </div>
 
             <div class="advanced-options">
-                <span class="toggle-advanced" onclick="toggleAdvanced()">⚙️ Advanced Options</span>
+                <span class="toggle-advanced" onclick="toggleAdvanced()" id="advancedToggle">⚙️ 高级选项</span>
                 <div class="advanced-content" id="advancedContent">
                     <div class="input-group">
-                        <label for="customCode">Custom Short Code (optional)</label>
+                        <label for="customCode" id="labelCustom">自定义短代码（可选）</label>
                         <input 
                             type="text" 
                             id="customCode" 
@@ -248,29 +276,32 @@
                         >
                     </div>
                     <div class="input-group">
-                        <label for="password">Password Protection (optional)</label>
+                        <label for="password" id="labelPassword">密码保护（可选）</label>
                         <input 
                             type="password" 
                             id="password" 
-                            placeholder="Enter password"
+                            placeholder="输入密码"
                         >
+                        <small style="color: #999; margin-top: 5px; display: block;" id="passwordHint">
+                            设置后，访问短链接需要输入密码
+                        </small>
                     </div>
                 </div>
             </div>
 
             <button type="submit" class="button" id="submitBtn">
-                Shorten URL
+                缩短 URL
             </button>
         </form>
 
         <div class="result" id="result">
-            <strong>✅ Success! Your short URL:</strong>
+            <strong id="successText">✅ 成功！您的短链接：</strong>
             <div class="short-url">
                 <input type="text" id="shortUrlInput" readonly>
-                <button class="copy-btn" onclick="copyUrl()">Copy</button>
+                <button class="copy-btn" onclick="copyUrl()" id="copyBtn">复制</button>
             </div>
             <div class="stats-link">
-                <a href="#" id="statsLink" target="_blank">View Statistics</a>
+                <a href="#" id="statsLink" target="_blank" id="statsLinkText">查看统计数据</a>
             </div>
         </div>
 
@@ -278,13 +309,78 @@
     </div>
 
     <div class="footer">
-        Powered by <a href="https://www.cloudflare.com/" target="_blank">Cloudflare Workers</a>
-        <br>
-        <a href="admin.html">Admin Panel</a>
+        <span id="footerText">由 <a href="https://www.xswweb.com" target="_blank">www.xswweb.com</a> 提供支持</span>
+        <a href="admin.html" id="adminLink">管理面板</a>
     </div>
 
     <script>
         const API_BASE = 'https://link.xswweb.com';
+        
+        // 语言翻译数据
+        const translations = {
+            zh: {
+                title: '🔗 URL 缩短器',
+                subtitle: '让你的链接简短而精炼',
+                labelUrl: '输入您的长 URL',
+                advancedToggle: '⚙️ 高级选项',
+                labelCustom: '自定义短代码（可选）',
+                labelPassword: '密码保护（可选）',
+                passwordHint: '设置后，访问短链接需要输入密码',
+                submitBtn: '缩短 URL',
+                successText: '✅ 成功！您的短链接：',
+                copyBtn: '复制',
+                statsLinkText: '查看统计数据',
+                footerText: '提供支持',
+                adminLink: '管理面板',
+                langText: 'English',
+                creating: '创建中...',
+                copied: '已复制！'
+            },
+            en: {
+                title: '🔗 URL Shortener',
+                subtitle: 'Make your links short and sweet',
+                labelUrl: 'Enter your long URL',
+                advancedToggle: '⚙️ Advanced Options',
+                labelCustom: 'Custom Short Code (optional)',
+                labelPassword: 'Password Protection (optional)',
+                passwordHint: 'Password required to access this link',
+                submitBtn: 'Shorten URL',
+                successText: '✅ Success! Your short URL:',
+                copyBtn: 'Copy',
+                statsLinkText: 'View Statistics',
+                footerText: 'Powered by',
+                adminLink: 'Admin Panel',
+                langText: '中文',
+                creating: 'Creating...',
+                copied: 'Copied!'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('labelUrl').textContent = t.labelUrl;
+            document.getElementById('advancedToggle').textContent = t.advancedToggle;
+            document.getElementById('labelCustom').textContent = t.labelCustom;
+            document.getElementById('labelPassword').textContent = t.labelPassword;
+            document.getElementById('passwordHint').textContent = t.passwordHint;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('successText').textContent = t.successText;
+            document.getElementById('copyBtn').textContent = t.copyBtn;
+            document.getElementById('statsLinkText').textContent = t.statsLinkText;
+            document.getElementById('adminLink').textContent = t.adminLink;
+            document.getElementById('langText').textContent = t.langText;
+            
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+        }
 
         document.getElementById('shortenForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -295,6 +391,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const result = document.getElementById('result');
             const error = document.getElementById('error');
+            const t = translations[currentLang];
 
             // Hide previous results
             result.classList.remove('show');
@@ -302,7 +399,7 @@
 
             // Disable button
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating...';
+            submitBtn.textContent = t.creating;
 
             try {
                 const response = await fetch(`${API_BASE}/api/shorten`, {
@@ -324,15 +421,15 @@
                     document.getElementById('statsLink').href = `stats.html?code=${data.shortCode}`;
                     result.classList.add('show');
                 } else {
-                    error.textContent = data.error || 'An error occurred';
+                    error.textContent = data.error || (currentLang === 'zh' ? '发生错误' : 'An error occurred');
                     error.classList.add('show');
                 }
             } catch (err) {
-                error.textContent = 'Network error. Please check your API endpoint.';
+                error.textContent = currentLang === 'zh' ? '网络错误，请检查 API 端点' : 'Network error. Please check your API endpoint.';
                 error.classList.add('show');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Shorten URL';
+                submitBtn.textContent = t.submitBtn;
             }
         });
 
@@ -348,7 +445,8 @@
             
             const btn = event.target;
             const originalText = btn.textContent;
-            btn.textContent = 'Copied!';
+            const t = translations[currentLang];
+            btn.textContent = t.copied;
             setTimeout(() => {
                 btn.textContent = originalText;
             }, 2000);
@@ -356,6 +454,4 @@
     </script>
 </body>
 </html>
-
-
 
