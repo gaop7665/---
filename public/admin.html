@@ -18,7 +18,7 @@
             background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
@@ -33,7 +33,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: rgba(10, 14, 39, 0.85);
             backdrop-filter: blur(20px);
@@ -177,10 +177,75 @@
             color: #8b95c9;
         }
 
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .delete-selected-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff3250 0%, #ff6b80 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        .delete-selected-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 50, 80, 0.4);
+        }
+
+        .delete-selected-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .table-wrapper {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid rgba(13, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(13, 255, 255, 0.05);
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(13, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(13, 255, 255, 0.5);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th {
@@ -190,6 +255,9 @@
             font-weight: 600;
             color: #0dffff;
             border: 1px solid rgba(13, 255, 255, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         td {
@@ -203,15 +271,26 @@
         }
 
         .url-cell {
-            max-width: 300px;
+            max-width: 400px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             color: #fff;
         }
 
+        .short-code-link {
+            color: #0dffff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .short-code-link:hover {
+            text-shadow: 0 0 10px rgba(13, 255, 255, 0.8);
+        }
+
         .delete-btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: linear-gradient(135deg, #ff3250 0%, #ff6b80 100%);
             color: white;
             border: none;
@@ -221,11 +300,55 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-size: 12px;
         }
 
         .delete-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255, 50, 80, 0.4);
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            background: rgba(13, 255, 255, 0.1);
+            color: #0dffff;
+            border: 1px solid rgba(13, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 40px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: rgba(13, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(13, 255, 255, 0.3);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #0dffff 0%, #0a7aff 100%);
+            color: #0a0e27;
+            border-color: #0dffff;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #8b95c9;
+            font-size: 14px;
         }
 
         .back-link {
@@ -259,6 +382,13 @@
             text-align: center;
             padding: 40px;
             color: #8b95c9;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0dffff;
         }
 
         /* 科技感底部信息 */
@@ -397,10 +527,42 @@
                 </div>
             </div>
 
-            <h2 style="color: #0dffff; margin-bottom: 10px;">所有短链接</h2>
-            <div id="urlList">
-                <div class="loading">加载中...</div>
+            <h2 style="color: #0dffff; margin-bottom: 20px;">所有短链接</h2>
+            
+            <div class="table-controls">
+                <div class="bulk-actions">
+                    <button class="delete-selected-btn" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+                        🗑️ 删除选中 (<span id="selectedCount">0</span>)
+                    </button>
+                </div>
+                <div class="page-info" id="pageInfo">
+                    第 1 页，共 1 页
+                </div>
             </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                            </th>
+                            <th>短代码</th>
+                            <th>长 URL</th>
+                            <th>访问量</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="urlList">
+                        <tr>
+                            <td colspan="6" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination"></div>
 
             <button class="button" onclick="logout()" style="max-width: 200px; margin-top: 20px;">
                 退出登录
@@ -506,6 +668,10 @@
 
         const API_BASE = 'https://link.xswweb.com';
         let adminToken = localStorage.getItem('adminToken');
+        let allUrls = [];
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let selectedUrls = new Set();
 
         if (adminToken) {
             document.getElementById('loginForm').style.display = 'none';
@@ -560,53 +726,210 @@
                 }
 
                 const data = await response.json();
-                const urls = data.urls || [];
+                allUrls = data.urls || [];
 
-                document.getElementById('totalUrls').textContent = urls.length;
-                const totalVisits = urls.reduce((sum, url) => sum + (url.visits || 0), 0);
+                document.getElementById('totalUrls').textContent = allUrls.length;
+                const totalVisits = allUrls.reduce((sum, url) => sum + (url.visits || 0), 0);
                 document.getElementById('totalVisits').textContent = totalVisits;
 
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>短代码</th>
-                                <th>长 URL</th>
-                                <th>访问量</th>
-                                <th>创建时间</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                urls.forEach(url => {
-                    const createdDate = url.createdAt ? new Date(url.createdAt).toLocaleDateString() : 'N/A';
-                    tableHtml += `
-                        <tr>
-                            <td><strong style="color: #0dffff;">${url.shortCode}</strong></td>
-                            <td class="url-cell" title="${url.longUrl}">${url.longUrl}</td>
-                            <td>${url.visits || 0}</td>
-                            <td>${createdDate}</td>
-                            <td>
-                                <button class="delete-btn" onclick="deleteUrl('${url.shortCode}')">
-                                    删除
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tableHtml += `
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('urlList').innerHTML = tableHtml;
+                renderTable();
+                renderPagination();
 
             } catch (err) {
                 document.getElementById('urlList').innerHTML = 
-                    `<p style="color: #ff3250; text-align: center;">加载数据失败</p>`;
+                    `<tr><td colspan="6" style="color: #ff3250; text-align: center;">加载数据失败</td></tr>`;
+            }
+        }
+
+        function renderTable() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageUrls = allUrls.slice(start, end);
+
+            if (pageUrls.length === 0) {
+                document.getElementById('urlList').innerHTML = 
+                    '<tr><td colspan="6" style="text-align: center; color: #8b95c9;">暂无数据</td></tr>';
+                return;
+            }
+
+            let tableHtml = '';
+            pageUrls.forEach(url => {
+                const createdDate = url.createdAt ? new Date(url.createdAt).toLocaleDateString() : 'N/A';
+                const shortUrl = `${API_BASE}/${url.shortCode}`;
+                const isSelected = selectedUrls.has(url.shortCode);
+                
+                tableHtml += `
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="url-checkbox" 
+                                   data-code="${url.shortCode}" 
+                                   ${isSelected ? 'checked' : ''}
+                                   onchange="toggleUrlSelection('${url.shortCode}')">
+                        </td>
+                        <td>
+                            <a href="${shortUrl}" target="_blank" class="short-code-link">
+                                ${url.shortCode}
+                            </a>
+                        </td>
+                        <td class="url-cell" title="${url.longUrl}">${url.longUrl}</td>
+                        <td>${url.visits || 0}</td>
+                        <td>${createdDate}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteUrl('${url.shortCode}')">
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('urlList').innerHTML = tableHtml;
+            updateSelectAllCheckbox();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(allUrls.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                document.getElementById('pageInfo').textContent = 
+                    `共 ${allUrls.length} 条记录`;
+                return;
+            }
+
+            let html = '';
+            
+            // 上一页按钮
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" 
+                     ${currentPage === 1 ? 'disabled' : ''}>
+                     ‹ 上一页
+                     </button>`;
+
+            // 页码按钮
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span class="page-info">...</span>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" 
+                         onclick="goToPage(${i})">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<span class="page-info">...</span>`;
+                }
+                html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+
+            // 下一页按钮
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" 
+                     ${currentPage === totalPages ? 'disabled' : ''}>
+                     下一页 ›
+                     </button>`;
+
+            pagination.innerHTML = html;
+            
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, allUrls.length);
+            document.getElementById('pageInfo').textContent = 
+                `第 ${currentPage} 页，共 ${totalPages} 页 | 显示 ${start}-${end} / ${allUrls.length} 条`;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(allUrls.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderTable();
+            renderPagination();
+            
+            // 滚动到表格顶部
+            document.querySelector('.table-wrapper').scrollTop = 0;
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.url-checkbox');
+            
+            if (selectAll.checked) {
+                // 选中当前页所有项
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedUrls.add(cb.dataset.code);
+                });
+            } else {
+                // 取消选中当前页所有项
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                    selectedUrls.delete(cb.dataset.code);
+                });
+            }
+            
+            updateSelectedCount();
+        }
+
+        function toggleUrlSelection(code) {
+            if (selectedUrls.has(code)) {
+                selectedUrls.delete(code);
+            } else {
+                selectedUrls.add(code);
+            }
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.url-checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            selectAll.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+            selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+        }
+
+        function updateSelectedCount() {
+            const count = selectedUrls.size;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('deleteSelectedBtn').disabled = count === 0;
+        }
+
+        async function deleteSelected() {
+            if (selectedUrls.size === 0) return;
+            
+            if (!confirm(`确定要删除选中的 ${selectedUrls.size} 个短链接吗？`)) {
+                return;
+            }
+
+            const deletePromises = Array.from(selectedUrls).map(code => 
+                fetch(`${API_BASE}/api/delete/${code}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                })
+            );
+
+            try {
+                await Promise.all(deletePromises);
+                selectedUrls.clear();
+                document.getElementById('selectAll').checked = false;
+                await loadDashboard();
+                alert('删除成功！');
+            } catch (err) {
+                alert('删除失败，请重试');
             }
         }
 
@@ -624,7 +947,8 @@
                 });
 
                 if (response.ok) {
-                    loadDashboard();
+                    selectedUrls.delete(shortCode);
+                    await loadDashboard();
                 } else {
                     alert('删除失败');
                 }
